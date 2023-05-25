@@ -190,6 +190,10 @@ def contact():
 
 @app.route("/new-post", methods=["GET", "POST"])
 def add_new_post():
+    if not current_user.is_authenticated:
+        flash("You need to login or register to create post.")
+        return redirect(url_for("login"))
+
     form = CreatePostForm()
     if form.validate_on_submit():
         new_post = BlogPost(
