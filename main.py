@@ -217,18 +217,22 @@ def add_new_post():
         return redirect(url_for("login"))
 
     form = CreatePostForm()
-    if form.validate_on_submit():
-        new_post = BlogPost(
-            title=form.title.data,
-            subtitle=form.subtitle.data,
-            body=form.body.data,
-            img_url=form.img_url.data,
-            author=current_user,
-            date=date.today().strftime("%B %d, %Y")
-        )
-        db.session.add(new_post)
-        db.session.commit()
-        return redirect(url_for("get_all_posts"))
+    if request.method == "POST":
+        if not form.img_url.data:
+            form.img_url.data = "https://media.istockphoto.com/id/1182434606/photo/reflections-of-sunset-with-cloudscape-in-lake-water.jpg?s=612x612&w=0&k=20&c=82Y10VMTzKG2e6IZ1amcuQjgeEAhTeKqvzCpGgsytFo="
+
+        if form.validate_on_submit():
+            new_post = BlogPost(
+                title=form.title.data,
+                subtitle=form.subtitle.data,
+                body=form.body.data,
+                img_url=form.img_url.data,
+                author=current_user,
+                date=date.today().strftime("%B %d, %Y")
+            )
+            db.session.add(new_post)
+            db.session.commit()
+            return redirect(url_for("get_all_posts"))
     return render_template("make-post.html", form=form, current_user=current_user)
 
 
